@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
 # Dawei 安装器：从 GitHub 拉取最新配置，安装到 Cursor 项目或 Codex/GPT。
 # 用法：
-#   ./install.command                      # 交互式
+#   ./install.command                          # 交互式
 #   ./install.command --mode cursor --target "/你的项目"
-#   ./install.command --mode gpt           # 全局装到 ~/.codex
+#   ./install.command --mode gpt               # 全局装到 ~/.codex（默认 Dawei 人格）
+#   ./install.command --mode gpt --profile waiwai   # 用 waiwai 的 GPT-5.6 提示词
 #   ./install.command --mode both --target "/你的项目"
 #   curl -fsSL https://raw.githubusercontent.com/dawei-ux/Cursor-Gpt-Armor-Penetration/main/install.command | bash
+#
+# --profile 只影响 Codex/GPT 的 AGENTS.md 内容：
+#   dawei （默认）  Dawei 人格，从 .cursor/rules 合并而来
+#   waiwai          linux.do 大佬 waiwai 分享的 GPT-5.6/Codex 系统提示词
 set -euo pipefail
 
 REPO_SLUG="dawei-ux/Cursor-Gpt-Armor-Penetration"
@@ -15,12 +20,14 @@ BRANCH="main"
 MODE=""
 TARGET=""
 REF="$BRANCH"
+PROFILE=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --mode)   MODE="${2:-}"; shift 2 ;;
-    --target) TARGET="${2:-}"; shift 2 ;;
-    --ref)    REF="${2:-}"; shift 2 ;;
+    --mode)    MODE="${2:-}"; shift 2 ;;
+    --target)  TARGET="${2:-}"; shift 2 ;;
+    --ref)     REF="${2:-}"; shift 2 ;;
+    --profile) PROFILE="${2:-}"; shift 2 ;;
     -h|--help)
       grep -E '^#( |$)' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "[X] 未知参数：$1"; exit 2 ;;
@@ -46,6 +53,23 @@ if [[ -z "$MODE" ]]; then
     MODE="both"
   fi
 fi
+
+# 选择 GPT 人格（仅 gpt/both 生效）
+if [[ "$MODE" == "gpt" || "$MODE" == "both" ]]; then
+  if [[ -z "$PROFILE" ]]; then
+    if [[ -t 0 ]]; then
+      printf "Codex/GPT 用哪套提示词？ [1] Dawei(默认)  [2] waiwai 的 GPT-5.6 提示词\n> "
+      read -r pchoice
+      case "$pchoice" in
+        2) PROFILE="waiwai" ;;
+        *) PROFILE="dawei" ;;
+      esac
+    else
+      PROFILE="dawei"
+    fi
+  fi
+fi
+[[ -z "$PROFILE" ]] && PROFILE="dawei"
 
 if [[ "$MODE" == "cursor" || "$MODE" == "both" ]]; then
   if [[ -z "$TARGET" ]]; then
@@ -120,8 +144,19 @@ install_gpt() {
   local backup="$base/backups/dawei-$(date +%Y%m%d-%H%M%S)"
   mkdir -p "$skills" "$backup"
 
+  local prompt_src prompt_label
+  case "$PROFILE" in
+    waiwai)
+      prompt_src="$SRC/codex/waiwai-gpt56-ruleset.md"
+      prompt_label="waiwai GPT-5.6 提示词" ;;
+    *)
+      prompt_src="$SRC/codex/AGENTS.md"
+      prompt_label="Dawei 人格" ;;
+  esac
+  [[ -f "$prompt_src" ]] || die "找不到提示词文件：$prompt_src"
+
   [[ -e "$base/AGENTS.md" ]] && cp "$base/AGENTS.md" "$backup/AGENTS.md"
-  cp "$SRC/codex/AGENTS.md" "$base/AGENTS.md"
+  cp "$prompt_src" "$base/AGENTS.md"
 
   local n_skills=0
   for s in "$SRC"/.cursor/skills/dawei-*; do
@@ -131,7 +166,7 @@ install_gpt() {
     rm -rf "$skills/$name"
     cp -R "$s" "$skills/$name"; n_skills=$((n_skills+1))
   done
-  ok "Codex/GPT: 写入 AGENTS.md 与 $n_skills 个 Skills 到 $base"
+  ok "Codex/GPT: 写入 AGENTS.md（$prompt_label）与 $n_skills 个 Skills 到 $base"
   info "备份目录：$backup"
 }
 

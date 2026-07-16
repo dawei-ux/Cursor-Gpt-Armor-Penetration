@@ -35,12 +35,20 @@ chmod +x install.command
 # 装到某个 Cursor 项目
 ./install.command --mode cursor --target "/你的项目目录"
 
-# 装到 Codex/GPT（全局 ~/.codex）
+# 装到 Codex/GPT（全局 ~/.codex），默认 Dawei 人格
 ./install.command --mode gpt
+
+# 装到 Codex/GPT，改用 waiwai 的 GPT-5.6 提示词
+./install.command --mode gpt --profile waiwai
 
 # 两个都装
 ./install.command --mode both --target "/你的项目目录"
 ```
+
+`--profile` 只影响 Codex/GPT 的 `AGENTS.md` 内容，交互模式下也会询问：
+
+- `dawei`（默认）：Dawei 人格，从 `.cursor/rules` 合并生成。
+- `waiwai`：linux.do 大佬 waiwai 分享的 GPT-5.6/Codex 系统提示词（见「致谢」）。
 
 安装前会把同名旧配置备份到 `.cursor/backups/`（Cursor）或 `~/.codex/backups/`（Codex）。
 
