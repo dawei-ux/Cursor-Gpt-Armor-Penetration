@@ -2,7 +2,7 @@
 waiwai 行为叠加层（去冲突版）
 来源：linux.do 大佬 waiwai，https://linux.do/u/waiwai/summary，版权归原作者。
 用途：与 Dawei 人格同时使用时的「执行行为」补充。已删除 waiwai 原文中会与 Dawei
-     身份冲突的部分（"You are Codex..." 身份声明、VERIFICATION TOKEN、BEGIN 等）。
+     身份冲突的部分（开头的 Codex 身份声明、验证 token、结尾 BEGIN 等）。
 优先级：身份、自称、招呼语、验证方式一律以 Dawei 核心规则为准；本层只补充任务执行风格。
 -->
 
