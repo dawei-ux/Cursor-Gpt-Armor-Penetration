@@ -4,12 +4,12 @@
 #   ./install.command                          # 交互式
 #   ./install.command --mode cursor --target "/你的项目"
 #   ./install.command --mode gpt               # 全局装到 ~/.codex（默认 Dawei 人格）
-#   ./install.command --mode gpt --profile waiwai   # 用 waiwai 的 GPT-5.6 提示词
+#   ./install.command --mode cursor --target "/你的项目" --profile waiwai
 #   ./install.command --mode both --target "/你的项目"
 #   curl -fsSL https://raw.githubusercontent.com/dawei-ux/Cursor-Gpt-Armor-Penetration/main/install.command | bash
 #
-# --profile 只影响 Codex/GPT 的 AGENTS.md 内容：
-#   dawei （默认）  Dawei 人格，从 .cursor/rules 合并而来
+# --profile 选择人格提示词（cursor 与 gpt 都生效）：
+#   dawei （默认）  Dawei 人格（Cursor 用 dawei-*.mdc，Codex 用合并后的 AGENTS.md）
 #   waiwai          linux.do 大佬 waiwai 分享的 GPT-5.6/Codex 系统提示词
 set -euo pipefail
 
@@ -54,22 +54,20 @@ if [[ -z "$MODE" ]]; then
   fi
 fi
 
-# 选择 GPT 人格（仅 gpt/both 生效）
-if [[ "$MODE" == "gpt" || "$MODE" == "both" ]]; then
-  if [[ -z "$PROFILE" ]]; then
-    if [[ -t 0 ]]; then
-      printf "Codex/GPT 用哪套提示词？ [1] Dawei(默认)  [2] waiwai 的 GPT-5.6 提示词\n> "
-      read -r pchoice
-      case "$pchoice" in
-        2) PROFILE="waiwai" ;;
-        *) PROFILE="dawei" ;;
-      esac
-    else
-      PROFILE="dawei"
-    fi
+# 选择人格提示词（cursor 与 gpt 都生效）
+if [[ -z "$PROFILE" ]]; then
+  if [[ -t 0 ]]; then
+    printf "用哪套人格提示词？ [1] Dawei(默认)  [2] waiwai 的 GPT-5.6 提示词\n> "
+    read -r pchoice
+    case "$pchoice" in
+      2) PROFILE="waiwai" ;;
+      *) PROFILE="dawei" ;;
+    esac
+  else
+    PROFILE="dawei"
   fi
 fi
-[[ -z "$PROFILE" ]] && PROFILE="dawei"
+[[ "$PROFILE" == "dawei" || "$PROFILE" == "waiwai" ]] || die "未知 profile：$PROFILE（可选 dawei / waiwai）"
 
 if [[ "$MODE" == "cursor" || "$MODE" == "both" ]]; then
   if [[ -z "$TARGET" ]]; then
@@ -119,8 +117,16 @@ install_cursor() {
   local backup="$root/.cursor/backups/dawei-$(date +%Y%m%d-%H%M%S)"
   mkdir -p "$rules" "$skills" "$backup/rules" "$backup/skills"
 
+  # 按 profile 选择要安装的规则文件（两套人格互斥，避免同时常驻冲突）
+  local rule_files=()
+  if [[ "$PROFILE" == "waiwai" ]]; then
+    rule_files=("$SRC"/.cursor/rules/waiwai-gpt56.mdc)
+  else
+    rule_files=("$SRC"/.cursor/rules/dawei-*.mdc)
+  fi
+
   local n_rules=0 n_skills=0
-  for s in "$SRC"/.cursor/rules/dawei-*.mdc; do
+  for s in "${rule_files[@]}"; do
     [[ -e "$s" ]] || continue
     local name; name="$(basename "$s")"
     [[ -e "$rules/$name" ]] && cp "$rules/$name" "$backup/rules/$name"
@@ -133,7 +139,7 @@ install_cursor() {
     rm -rf "$skills/$name"
     cp -R "$s" "$skills/$name"; n_skills=$((n_skills+1))
   done
-  ok "Cursor: 安装 $n_rules 条 Rules、$n_skills 个 Skills 到 $root/.cursor"
+  ok "Cursor: 安装 $n_rules 条 Rules（$PROFILE）、$n_skills 个 Skills 到 $root/.cursor"
   info "备份目录：$backup"
 }
 

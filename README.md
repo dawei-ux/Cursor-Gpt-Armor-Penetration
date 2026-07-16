@@ -8,11 +8,12 @@
 
 ```text
 .cursor/
-├── rules/dawei-*.mdc        # Cursor Project Rules（5 个模块）
-└── skills/dawei-*/          # Agent Skills（6 个）
+├── rules/dawei-*.mdc        # Cursor Project Rules（Dawei 人格，5 个模块）
+├── rules/waiwai-gpt56.mdc   # Cursor 版 waiwai 提示词（--profile waiwai 时安装）
+└── skills/dawei-*/          # Agent Skills（6 个，两套人格共用）
 codex/
-├── AGENTS.md                # Codex/GPT 用，从 rules 合并生成（Dawei 人格）
-└── waiwai-gpt56-ruleset.md  # 另一套 GPT-5.6/Codex 系统提示词（来源见「致谢」）
+├── AGENTS.md                # Codex/GPT 用，从 dawei rules 合并生成
+└── waiwai-gpt56-ruleset.md  # Codex/GPT 用的 waiwai 提示词
 install.command             # 从 GitHub 下载并安装
 ```
 
@@ -45,10 +46,12 @@ chmod +x install.command
 ./install.command --mode both --target "/你的项目目录"
 ```
 
-`--profile` 只影响 Codex/GPT 的 `AGENTS.md` 内容，交互模式下也会询问：
+`--profile` 选择人格，**Cursor 和 Codex/GPT 都生效**，交互模式下也会询问：
 
-- `dawei`（默认）：Dawei 人格，从 `.cursor/rules` 合并生成。
-- `waiwai`：linux.do 大佬 waiwai 分享的 GPT-5.6/Codex 系统提示词（见「致谢」）。
+- `dawei`（默认）：Cursor 安装 `dawei-*.mdc`，Codex 用合并后的 `AGENTS.md`。
+- `waiwai`：linux.do 大佬 waiwai 分享的 GPT-5.6/Codex 系统提示词。Cursor 安装 `waiwai-gpt56.mdc`，Codex 用 `waiwai-gpt56-ruleset.md`（见「致谢」）。
+
+两套人格是互斥的（都是 always-apply 常驻规则），安装脚本只写入所选的那套，避免同时常驻冲突；6 个 Skill 两套共用。
 
 安装前会把同名旧配置备份到 `.cursor/backups/`（Cursor）或 `~/.codex/backups/`（Codex）。
 
@@ -65,7 +68,7 @@ chmod +x install.command
 
 ## 致谢 / 来源
 
-- `codex/waiwai-gpt56-ruleset.md`：GPT-5.6 / Codex 系统提示词，来自 linux.do 论坛大佬 **waiwai**，主页 <https://linux.do/u/waiwai/summary>。收录于此仅作整理与致谢，版权与思路归原作者所有。
+- `codex/waiwai-gpt56-ruleset.md` 与 `.cursor/rules/waiwai-gpt56.mdc`：GPT-5.6 / Codex 系统提示词，来自 linux.do 论坛大佬 **waiwai**，主页 <https://linux.do/u/waiwai/summary>。收录于此仅作整理与致谢，版权与思路归原作者所有。
 
 ## 卸载
 
