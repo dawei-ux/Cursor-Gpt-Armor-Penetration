@@ -67,7 +67,7 @@ if [[ -z "$PROFILE" ]]; then
     PROFILE="dawei"
   fi
 fi
-[[ "$PROFILE" == "dawei" || "$PROFILE" == "waiwai" ]] || die "未知 profile：$PROFILE（可选 dawei / waiwai）"
+[[ "$PROFILE" == "dawei" || "$PROFILE" == "waiwai" ]] || die "未知 profile：${PROFILE}（可选 dawei / waiwai）"
 
 if [[ "$MODE" == "cursor" || "$MODE" == "both" ]]; then
   if [[ -z "$TARGET" ]]; then
@@ -139,7 +139,7 @@ install_cursor() {
     rm -rf "$skills/$name"
     cp -R "$s" "$skills/$name"; n_skills=$((n_skills+1))
   done
-  ok "Cursor: 安装 $n_rules 条 Rules（$PROFILE）、$n_skills 个 Skills 到 $root/.cursor"
+  ok "Cursor: 安装 ${n_rules} 条 Rules（${PROFILE}）、${n_skills} 个 Skills 到 ${root}/.cursor"
   info "备份目录：$backup"
 }
 
@@ -172,7 +172,7 @@ install_gpt() {
     rm -rf "$skills/$name"
     cp -R "$s" "$skills/$name"; n_skills=$((n_skills+1))
   done
-  ok "Codex/GPT: 写入 AGENTS.md（$prompt_label）与 $n_skills 个 Skills 到 $base"
+  ok "Codex/GPT: 写入 AGENTS.md（${prompt_label}）与 ${n_skills} 个 Skills 到 ${base}"
   info "备份目录：$backup"
 }
 
