@@ -11,6 +11,7 @@
 # --profile 选择人格提示词（cursor 与 gpt 都生效）：
 #   dawei （默认）  Dawei 人格（Cursor 用 dawei-*.mdc，Codex 用合并后的 AGENTS.md）
 #   waiwai          linux.do 大佬 waiwai 分享的 GPT-5.6/Codex 系统提示词
+#   both            两套都用：Dawei 负责身份/人格，waiwai 作为去冲突的行为叠加层
 set -euo pipefail
 
 REPO_SLUG="dawei-ux/Cursor-Gpt-Armor-Penetration"
@@ -57,17 +58,21 @@ fi
 # 选择人格提示词（cursor 与 gpt 都生效）
 if [[ -z "$PROFILE" ]]; then
   if [[ -t 0 ]]; then
-    printf "用哪套人格提示词？ [1] Dawei(默认)  [2] waiwai 的 GPT-5.6 提示词\n> "
+    printf "用哪套人格提示词？ [1] Dawei(默认)  [2] waiwai 的 GPT-5.6 提示词  [3] 两套都用(Dawei身份+waiwai行为)\n> "
     read -r pchoice
     case "$pchoice" in
       2) PROFILE="waiwai" ;;
+      3) PROFILE="both" ;;
       *) PROFILE="dawei" ;;
     esac
   else
     PROFILE="dawei"
   fi
 fi
-[[ "$PROFILE" == "dawei" || "$PROFILE" == "waiwai" ]] || die "未知 profile：${PROFILE}（可选 dawei / waiwai）"
+case "$PROFILE" in
+  dawei|waiwai|both) ;;
+  *) die "未知 profile：${PROFILE}（可选 dawei / waiwai / both）" ;;
+esac
 
 if [[ "$MODE" == "cursor" || "$MODE" == "both" ]]; then
   if [[ -z "$TARGET" ]]; then
@@ -117,13 +122,16 @@ install_cursor() {
   local backup="$root/.cursor/backups/dawei-$(date +%Y%m%d-%H%M%S)"
   mkdir -p "$rules" "$skills" "$backup/rules" "$backup/skills"
 
-  # 按 profile 选择要安装的规则文件（两套人格互斥，避免同时常驻冲突）
+  # 按 profile 选择要安装的规则文件
+  #   dawei  -> 仅 Dawei 5 条
+  #   waiwai -> 仅 waiwai 完整提示词
+  #   both   -> Dawei 5 条 + waiwai 去冲突行为叠加层
   local rule_files=()
-  if [[ "$PROFILE" == "waiwai" ]]; then
-    rule_files=("$SRC"/.cursor/rules/waiwai-gpt56.mdc)
-  else
-    rule_files=("$SRC"/.cursor/rules/dawei-*.mdc)
-  fi
+  case "$PROFILE" in
+    waiwai) rule_files=("$SRC"/.cursor/rules/waiwai-gpt56.mdc) ;;
+    both)   rule_files=("$SRC"/.cursor/rules/dawei-*.mdc "$SRC"/.cursor/rules/waiwai-behavior.mdc) ;;
+    *)      rule_files=("$SRC"/.cursor/rules/dawei-*.mdc) ;;
+  esac
 
   local n_rules=0 n_skills=0
   for s in "${rule_files[@]}"; do
@@ -150,19 +158,22 @@ install_gpt() {
   local backup="$base/backups/dawei-$(date +%Y%m%d-%H%M%S)"
   mkdir -p "$skills" "$backup"
 
-  local prompt_src prompt_label
+  local prompt_label
+  [[ -e "$base/AGENTS.md" ]] && cp "$base/AGENTS.md" "$backup/AGENTS.md"
   case "$PROFILE" in
     waiwai)
-      prompt_src="$SRC/codex/waiwai-gpt56-ruleset.md"
+      [[ -f "$SRC/codex/waiwai-gpt56-ruleset.md" ]] || die "找不到提示词文件：waiwai-gpt56-ruleset.md"
+      cp "$SRC/codex/waiwai-gpt56-ruleset.md" "$base/AGENTS.md"
       prompt_label="waiwai GPT-5.6 提示词" ;;
+    both)
+      [[ -f "$SRC/codex/AGENTS.md" && -f "$SRC/codex/waiwai-behavior.md" ]] || die "找不到 AGENTS.md 或 waiwai-behavior.md"
+      { cat "$SRC/codex/AGENTS.md"; printf '\n\n'; cat "$SRC/codex/waiwai-behavior.md"; } > "$base/AGENTS.md"
+      prompt_label="Dawei 人格 + waiwai 行为叠加" ;;
     *)
-      prompt_src="$SRC/codex/AGENTS.md"
+      [[ -f "$SRC/codex/AGENTS.md" ]] || die "找不到提示词文件：AGENTS.md"
+      cp "$SRC/codex/AGENTS.md" "$base/AGENTS.md"
       prompt_label="Dawei 人格" ;;
   esac
-  [[ -f "$prompt_src" ]] || die "找不到提示词文件：$prompt_src"
-
-  [[ -e "$base/AGENTS.md" ]] && cp "$base/AGENTS.md" "$backup/AGENTS.md"
-  cp "$prompt_src" "$base/AGENTS.md"
 
   local n_skills=0
   for s in "$SRC"/.cursor/skills/dawei-*; do
