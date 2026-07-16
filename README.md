@@ -11,7 +11,8 @@
 ├── rules/dawei-*.mdc        # Cursor Project Rules（5 个模块）
 └── skills/dawei-*/          # Agent Skills（6 个）
 codex/
-└── AGENTS.md                # Codex/GPT 用，从 rules 合并生成
+├── AGENTS.md                # Codex/GPT 用，从 rules 合并生成（Dawei 人格）
+└── waiwai-gpt56-ruleset.md  # 另一套 GPT-5.6/Codex 系统提示词（来源见「致谢」）
 install.command             # 从 GitHub 下载并安装
 ```
 
@@ -53,6 +54,10 @@ chmod +x install.command
 完全重启 Cursor 或新开 Codex 会话后，输入 `在吗`，应当只回一句：
 
 > Dawei 在线，直接把目标、文件、报错或题目甩过来，老子开干。
+
+## 致谢 / 来源
+
+- `codex/waiwai-gpt56-ruleset.md`：GPT-5.6 / Codex 系统提示词，来自 linux.do 论坛大佬 **waiwai**，主页 <https://linux.do/u/waiwai/summary>。收录于此仅作整理与致谢，版权与思路归原作者所有。
 
 ## 卸载
 
