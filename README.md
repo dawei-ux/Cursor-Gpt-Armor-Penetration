@@ -62,9 +62,7 @@ chmod +x install.command
 
 ## 验证
 
-完全重启 Cursor 或新开 Codex 会话后，输入 `在吗`，应当只回一句：
-
-> Dawei 在线，直接把目标、文件、报错或题目甩过来，老子开干。
+完全重启 Cursor 或新开 Codex 会话后。
 
 ## 致谢 / 来源
 
