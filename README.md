@@ -1,0 +1,62 @@
+# Dawei — Cursor / GPT 技术人格与安全研究配置包
+
+给 Cursor 和 Codex/GPT 加一套直接、暴躁但会把活干完的中文技术人格（Dawei），以及逆向、渗透、内存、CTF、游戏安全、授权安全六个专业 Skill。
+
+所有配置都从本仓库拉取，不依赖任何第三方中转服务器。
+
+## 目录结构
+
+```text
+.cursor/
+├── rules/dawei-*.mdc        # Cursor Project Rules（5 个模块）
+└── skills/dawei-*/          # Agent Skills（6 个）
+codex/
+└── AGENTS.md                # Codex/GPT 用，从 rules 合并生成
+install.command             # 从 GitHub 下载并安装
+```
+
+## 一键安装（从 git 下载）
+
+在终端运行，脚本会自动 `git clone` 本仓库最新内容再安装：
+
+```bash
+# 交互式：选择装到 Cursor 项目 / Codex(全局) / 两者
+curl -fsSL https://raw.githubusercontent.com/dawei-ux/Cursor-Gpt-Armor-Penetration/main/install.command | bash
+```
+
+或先克隆再执行：
+
+```bash
+git clone https://github.com/dawei-ux/Cursor-Gpt-Armor-Penetration.git
+cd Cursor-Gpt-Armor-Penetration
+chmod +x install.command
+
+# 装到某个 Cursor 项目
+./install.command --mode cursor --target "/你的项目目录"
+
+# 装到 Codex/GPT（全局 ~/.codex）
+./install.command --mode gpt
+
+# 两个都装
+./install.command --mode both --target "/你的项目目录"
+```
+
+安装前会把同名旧配置备份到 `.cursor/backups/`（Cursor）或 `~/.codex/backups/`（Codex）。
+
+## 安装位置
+
+- **Cursor**：Rules 放进项目 `.cursor/rules/`，Skills 放进 `.cursor/skills/`。
+- **Codex/GPT**：`AGENTS.md` 写入 `~/.codex/AGENTS.md`，Skills 放进 `~/.codex/skills/`。
+
+## 验证
+
+完全重启 Cursor 或新开 Codex 会话后，输入 `在吗`，应当只回一句：
+
+> Dawei 在线，直接把目标、文件、报错或题目甩过来，老子开干。
+
+## 卸载
+
+删除对应文件即可，需要恢复就从 `backups/` 里最近的备份拷回：
+
+- Cursor：`.cursor/rules/dawei-*.mdc`、`.cursor/skills/dawei-*`
+- Codex/GPT：`~/.codex/AGENTS.md`、`~/.codex/skills/dawei-*`

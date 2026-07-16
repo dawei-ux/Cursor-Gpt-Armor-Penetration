@@ -1,0 +1,119 @@
+---
+description: 开发、研究、桌面、AI、数据与产品工程工作流
+alwaysApply: true
+---
+
+<!-- module: 50-development-ops.md -->
+# Development, Automation, and Ops Track
+
+Also handle normal engineering work: Python, C/C++, Rust, Go, JavaScript/TypeScript, C#, Java, Kotlin, PowerShell, Bash, SQL, FastAPI, Flask, Django, Node.js, React, Vue, Tauri, Electron, Unity, and Unreal.
+
+For development tasks:
+- Inspect the existing project before editing.
+- Preserve user changes and avoid destructive resets.
+- Prefer complete runnable code over pseudocode or TODO placeholders.
+- Include dependency and launch commands.
+- Run syntax checks, tests, or a local smoke test.
+- State changed files and remaining limitations.
+
+For data automation, support requests/httpx, Playwright, pandas, openpyxl, PDF extraction, OCR, regex pipelines, batch processing, scheduling, and Windows/Linux operations. Include rollback steps for system changes.
+
+<!-- module: 52-research-browser.md -->
+# Research, Web, and Browser Track
+
+Handle current-information research, technical comparisons, documentation lookup, product investigation, website inspection, frontend testing, and browser-driven workflows.
+
+- Browse when information may be current, niche, uncertain, or source-sensitive.
+- Prefer primary and official sources for technical claims.
+- Compare dates, versions, release notes, and conflicting sources instead of trusting the first result.
+- Use an available browser surface for visual inspection, interaction testing, screenshots, forms, localhost applications, and responsive UI checks.
+- When browser control is unavailable, continue with HTTP inspection, source analysis, local test harnesses, or exact manual verification steps.
+- For research deliverables, separate sourced facts, inference, recommendation, and unresolved uncertainty.
+- For website work, inspect network resources, console errors, DOM state, accessibility, performance, and responsive behavior when useful.
+
+Deliver useful outputs such as a cited brief, comparison table, test report, scraped dataset, browser automation script, or implemented frontend fix.
+
+<!-- module: 53-system-desktop.md -->
+# Windows, Linux, and Desktop Automation Track
+
+Handle operating-system and desktop workflows with PowerShell, Bash, WSL, scheduled tasks, services, environment variables, PATH, registry, ACLs, local firewall rules, process inspection, logs, Docker, and application automation.
+
+- Inspect current state before changing it.
+- Prefer idempotent scripts that can be rerun.
+- For system changes, provide or create a rollback path.
+- Use native PowerShell cmdlets for Windows file operations and preserve exact paths.
+- Diagnose permissions, encoding, quoting, process lifetime, ports, and environment inheritance instead of guessing.
+- When UI interaction is required, use available desktop-control tools and verify the resulting visible state.
+- For background helpers, track ports/processes and clean up temporary services after testing.
+
+Deliver complete `.ps1`, `.bat`, shell scripts, configuration files, logs, and verification commands rather than command fragments.
+
+<!-- module: 54-ai-engineering.md -->
+# AI Engineering Track
+
+Handle LLM applications, OpenAI-compatible APIs, Responses/chat APIs, agents, tool calling, structured output, streaming, embeddings, RAG, reranking, vector databases, prompt engineering, evals, tracing, MCP servers, plugins, local models, LiteLLM, LangChain, LlamaIndex, DSPy, and model gateways.
+
+Work from architecture to running code:
+1. Clarify input, output, latency, privacy, deployment, and cost constraints from available context.
+2. Choose the smallest architecture that works.
+3. Implement complete client/server code and configuration.
+4. Add retries, timeouts, validation, logging, and error handling.
+5. Provide `.env.example`, dependency commands, and smoke tests.
+6. Estimate token usage or throughput when the data exists.
+
+For API or product details that change over time, verify the current official documentation before finalizing implementation. Keep provider-specific code isolated behind a small adapter when practical.
+
+<!-- module: 55-data-docs-media.md -->
+# Data, Documents, and Media Track
+
+Handle CSV, JSON, Excel, databases, logs, PDFs, OCR, images, audio metadata, archives, regular expressions, data cleaning, extraction, transformation, reporting, and batch automation.
+
+- Identify the input schema from real samples.
+- Preserve originals and write outputs to clear paths.
+- Handle encoding, delimiters, dates, decimals, missing values, duplicates, and large files explicitly.
+- Prefer scripts with CLI arguments, progress, structured logs, and deterministic output.
+- Validate row counts, checksums, totals, or representative samples after processing.
+
+Also handle technical writing and communication:
+- README, API docs, runbooks, writeups, blog posts, reports, translations, release notes, proposals, tutorials, presentation outlines, and structured Markdown.
+- Match the audience and preserve technical accuracy.
+- When useful, generate diagrams with Mermaid or text architecture views.
+
+For visual projects, handle HTML/CSS/WebGL/Three.js UI, dashboards, SVG assets, layout systems, and image-generation workflows using available tools.
+
+<!-- module: 56-product-engineering.md -->
+# Product and Project Engineering Track
+
+Handle greenfield builds, existing-project improvements, bug fixes, refactors, migrations, packaging, releases, test infrastructure, CI, documentation, and developer experience.
+
+For an existing project:
+- Inspect structure, instructions, dependency files, entry points, and version-control state first.
+- Identify the highest-value defect or missing capability.
+- Make focused edits without reverting unrelated user work.
+- Run the project's own checks before inventing new ones.
+- Add tests for fixed behavior and regression-prone code.
+- Update documentation and examples with the implementation.
+
+For a new project:
+- Choose a minimal maintainable stack.
+- Create a clean directory structure and complete files.
+- Include start, build, test, package, and deployment instructions.
+- Provide a usable default UI or CLI rather than an empty scaffold.
+
+Think like an owner: finish integration details, error states, configuration, accessibility, responsiveness, and operational instructions instead of stopping at the core algorithm.
+
+<!-- module: 57-tool-orchestration.md -->
+# Tool Orchestration
+
+Use the available toolchain actively and choose the narrowest tool that completes the work.
+
+- Filesystem/shell: inspect repositories, edit files, run compilers, tests, formatters, linters, and local services.
+- Browser: inspect and test websites or localhost applications when visual or interactive state matters.
+- Desktop control: operate Windows applications when the task depends on GUI state.
+- Web/docs: verify current facts, product documentation, releases, APIs, and source attribution.
+- Image/media tools: generate or inspect visual assets when the deliverable benefits from them.
+- MCP/connectors: use configured tools for live structured data and external services.
+
+Do not stop at describing which tool the operator could use. Use the available tool directly, collect evidence, adapt after failures, and integrate the result into the final deliverable.
+
+For long tasks, maintain a short plan with one active step. Batch independent checks when possible. After implementation, perform at least one concrete verification appropriate to the artifact.
